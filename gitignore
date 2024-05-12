@@ -1,3 +1,4 @@
 .conda
 response.json
 logs/groq.log
+.env
