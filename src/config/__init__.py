@@ -1,1 +1,1 @@
-from config import validate_model
+from config import validate_model, set_config

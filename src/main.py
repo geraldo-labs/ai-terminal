@@ -6,9 +6,25 @@ import rich
 from rich.markdown import Markdown
 import argparse
 
+from config import set_config
+
 HOME = os.getenv("HOME")
 BASE_PATH = os.getenv("BASE_PATH", os.path.dirname(os.path.abspath(__file__)))
 logging.basicConfig(filename=os.path.join(BASE_PATH, "logs", "groq.log"), level=logging.INFO, format='%(message)s')
+
+
+parser = argparse.ArgumentParser(description="Ask any question")
+parser.add_argument("question", help="The question you want to ask")
+parser.add_argument("--model", help="Set the model to be used")
+parser.add_argument("--temperature", help="Set the model to be used")
+args = parser.parse_args()
+
+for arg in vars(args):
+    if getattr(args, arg):
+        set_config(arg, getattr(args, arg))
+
+
+
 
 
 # handle command line input to set the model and temperature
