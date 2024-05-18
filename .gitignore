@@ -2,3 +2,5 @@
 response.json
 logs/groq.log
 .env
+__pycache__
+bin

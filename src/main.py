@@ -1,70 +1,30 @@
 import os
 import requests
-import json
+import tempfile
 import logging
 import rich
 from rich.markdown import Markdown
 import argparse
+import datetime
 
 from config import set_config
+import uuid
 
 HOME = os.getenv("HOME")
 BASE_PATH = os.getenv("BASE_PATH", os.path.dirname(os.path.abspath(__file__)))
-logging.basicConfig(filename=os.path.join(BASE_PATH, "logs", "groq.log"), level=logging.INFO, format='%(message)s')
 
+# Create a temporary directory for logs
+today = datetime.date.today()
+temp_dir = tempfile.gettempdir()
+log_dir = os.path.join(temp_dir, str(today.year), str(today.month).zfill(2), str(today.day).zfill(2))
+os.makedirs(log_dir, exist_ok=True)
+logging.basicConfig(filename=os.path.join(log_dir, "ai-terminal.log"), level=logging.INFO, format='%(message)s')
 
 parser = argparse.ArgumentParser(description="Ask any question")
-parser.add_argument("question", help="The question you want to ask")
-parser.add_argument("--model", help="Set the model to be used")
-parser.add_argument("--temperature", help="Set the model to be used")
+parser.add_argument("question", help="The question you want to ask", default=None)
+parser.add_argument("--model", help="Set the model to be used", default=None)
+parser.add_argument("--temperature", help="Set the temperature value", type=float, default=None)
 args = parser.parse_args()
-
-for arg in vars(args):
-    if getattr(args, arg):
-        set_config(arg, getattr(args, arg))
-
-
-
-
-
-# handle command line input to set the model and temperature
-parser = argparse.ArgumentParser(description='Handle arguments of the application.')
-subparsers = parser.add_subparsers(dest='set', help='Sub-command help')
-
-# Subparser for the "model" command
-model_parser = subparsers.add_parser('model', help='Set the model name')
-model_parser.add_argument('modelname', type=str, help='Name of the model to set')
-
-# Subparser for the "temperature" command
-temp_parser = subparsers.add_parser('temperature', help='Set the temperature value')
-temp_parser.add_argument('value', type=str, help='Temperature value to set')
-
-
-
-
-
-
-
-
-print(temp_parser.parse_args())
-
-exit()
-
-
-
-
-
-
-
-
-parser = argparse.ArgumentParser(description='Set the model and temperature for the AI chatbot.')
-parser.add_argument('--model', type=str, default='llama3-70b-8192', help='The model to use for chatbot')
-parser.add_argument('--temperature', type=float, default=0.7, help='The temperature for chatbot response')
-args = parser.parse_args()
-
-# Set the model and temperature in the payload
-payload["model"] = args.model
-payload["temperature"] = args.temperature
 
 def handle_command_input(prompt: str):
     """
